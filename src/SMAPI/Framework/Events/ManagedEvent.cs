@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using StardewModdingAPI.Events;
@@ -101,13 +102,20 @@ namespace StardewModdingAPI.Framework.Events
             if (this.Handlers.Count == 0)
                 return;
 
+            var eventSw = new Stopwatch();
+            eventSw.Restart();
+
+            var timers = new List<(IModMetadata, TimeSpan)>();
+
             // raise event
             foreach (ManagedEventHandler<TEventArgs> handler in this.GetHandlers())
             {
                 Context.HeuristicModsRunningCode.Push(handler.SourceMod);
+                var sw = new Stopwatch();
 
                 try
                 {
+                    sw.Restart();
                     handler.Handler(null, args);
                 }
                 catch (Exception ex)
@@ -116,8 +124,22 @@ namespace StardewModdingAPI.Framework.Events
                 }
                 finally
                 {
+                    sw.Stop();
+                    timers.Add((handler.SourceMod, sw.Elapsed));
+                    if (sw.Elapsed.TotalMilliseconds > 10)
+                    {
+                        handler.SourceMod.LogAsMod($"[Profiler] took {sw.Elapsed.TotalMilliseconds:N}ms handling {this.EventName}", LogLevel.Trace);
+                    }
                     Context.HeuristicModsRunningCode.TryPop(out _);
                 }
+            }
+
+            eventSw.Stop();
+            if (eventSw.Elapsed.TotalMilliseconds > 100)
+            {
+                var slowestMods = timers.OrderByDescending(timer => timer.Item2.TotalMilliseconds).ToList();
+                string? msg = string.Join("\n", slowestMods.Select(t => $"\t{t.Item1.Manifest.UniqueID} => {t.Item2.TotalMilliseconds:N}"));
+                slowestMods[0].Item1.LogAsMod($"[BigLoop][Profiler] Took {eventSw.Elapsed.TotalMilliseconds:N}ms handling {this.EventName}\n{msg}");
             }
         }
 
@@ -133,9 +155,11 @@ namespace StardewModdingAPI.Framework.Events
             foreach (ManagedEventHandler<TEventArgs> handler in this.GetHandlers())
             {
                 Context.HeuristicModsRunningCode.Push(handler.SourceMod);
+                var sw = new Stopwatch();
 
                 try
                 {
+                    sw.Restart();
                     invoke(handler.SourceMod, args => handler.Handler(null, args));
                 }
                 catch (Exception ex)
@@ -144,6 +168,11 @@ namespace StardewModdingAPI.Framework.Events
                 }
                 finally
                 {
+                    sw.Stop();
+                    if (sw.Elapsed.TotalMilliseconds > 10)
+                    {
+                        handler.SourceMod.LogAsMod($"[Profiler] took {sw.Elapsed.TotalMilliseconds:N}ms handling {this.EventName} (w/ args)", LogLevel.Trace);
+                    }
                     Context.HeuristicModsRunningCode.TryPop(out _);
                 }
             }
