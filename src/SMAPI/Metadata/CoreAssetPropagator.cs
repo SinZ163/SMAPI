@@ -288,11 +288,11 @@ namespace StardewModdingAPI.Metadata
 
                 case "data/bigcraftablesinformation": // Game1.LoadContent
                     Game1.bigCraftablesInformation = content.Load<Dictionary<string, string>>(key);
-                    Utility.ClearParsedItemIDs();
+                    ItemRegistry.ResetCache();
                     return true;
 
                 case "data/boots": // BootsDataDefinition
-                    Utility.ClearParsedItemIDs();
+                    ItemRegistry.ResetCache();
                     return true;
 
                 case "data/buildings": // Game1.LoadContent
@@ -307,7 +307,7 @@ namespace StardewModdingAPI.Metadata
 
                 case "data/clothinginformation": // Game1.LoadContent
                     Game1.clothingInformation = content.Load<Dictionary<string, string>>(key);
-                    Utility.ClearParsedItemIDs();
+                    ItemRegistry.ResetCache();
                     return true;
 
                 case "data/concessions": // MovieTheater.GetConcessions
@@ -341,7 +341,7 @@ namespace StardewModdingAPI.Metadata
                     return true;
 
                 case "data/furniture": // FurnitureDataDefinition
-                    Utility.ClearParsedItemIDs();
+                    ItemRegistry.ResetCache();
                     return true;
 
                 case "data/fruittrees": // Game1.LoadContent
@@ -352,7 +352,7 @@ namespace StardewModdingAPI.Metadata
                     return changed | this.UpdateHairData();
 
                 case "data/hats": // HatDataDefinition
-                    Utility.ClearParsedItemIDs();
+                    ItemRegistry.ResetCache();
                     return true;
 
                 case "data/locationcontexts": // Game1.LoadContent
@@ -374,17 +374,17 @@ namespace StardewModdingAPI.Metadata
 
                 case "data/objectinformation": // Game1.LoadContent
                     Game1.objectInformation = content.Load<Dictionary<string, string>>(key);
-                    Utility.ClearParsedItemIDs();
+                    ItemRegistry.ResetCache();
                     return true;
 
                 case "data/tools": // Game1.LoadContent
                     Game1.toolData = content.Load<Dictionary<string, ToolData>>(key);
-                    Utility.ClearParsedItemIDs();
+                    ItemRegistry.ResetCache();
                     return true;
 
                 case "data/weapons": // Game1.LoadContent
                     Game1.weaponData = Game1.content.Load<Dictionary<string, WeaponData>>(@"Data\Weapons");
-                    Utility.ClearParsedItemIDs();
+                    ItemRegistry.ResetCache();
                     return true;
 
                 case "data/wildtrees": // Tree
