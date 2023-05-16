@@ -1867,6 +1867,11 @@ namespace StardewModdingAPI.Framework
             {
                 if (this.ModRegistry.Get(dependency.UniqueID) == null)
                 {
+                    // Temporary hack to ignore dependencies when its ContentPatcher to find more NPCDisposition weirdness
+                    if (mod.IsContentPack && mod?.Manifest?.ContentPackFor?.UniqueID == "Pathoschild.ContentPatcher")
+                    {
+                        continue;
+                    }
                     string dependencyName = mods
                         .FirstOrDefault(otherMod => otherMod.HasID(dependency.UniqueID))
                         ?.DisplayName ?? dependency.UniqueID;

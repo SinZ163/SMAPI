@@ -269,6 +269,12 @@ namespace StardewModdingAPI.Framework.ModLoading
             }
 
             // mark failed if missing dependencies
+
+            // Temporary hack to ignore dependencies when its ContentPatcher to find more NPCDisposition weirdness
+            if (mod.IsContentPack && mod?.Manifest?.ContentPackFor?.UniqueID == "Pathoschild.ContentPatcher")
+            {
+            }
+            else
             {
                 string[] failedModNames = (
                     from entry in dependencies
@@ -287,7 +293,11 @@ namespace StardewModdingAPI.Framework.ModLoading
                     return states[mod] = ModDependencyStatus.Failed;
                 }
             }
-
+            // Temporary hack to ignore dependencies when its ContentPatcher to find more NPCDisposition weirdness
+            if (mod.IsContentPack && mod?.Manifest?.ContentPackFor?.UniqueID == "Pathoschild.ContentPatcher")
+            {
+            }
+            else
             // dependency min version not met, mark failed
             {
                 string[] failedLabels =
@@ -335,8 +345,8 @@ namespace StardewModdingAPI.Framework.ModLoading
                         // sorted successfully
                         case ModDependencyStatus.Sorted:
                         case ModDependencyStatus.Failed when !dependency.IsRequired: // ignore failed optional dependency
+                        case ModDependencyStatus.Failed when mod.IsContentPack && mod?.Manifest?.ContentPackFor?.UniqueID == "Pathoschild.ContentPatcher":
                             break;
-
                         // failed, which means this mod can't be loaded either
                         case ModDependencyStatus.Failed:
                             sortedMods.Push(mod);
