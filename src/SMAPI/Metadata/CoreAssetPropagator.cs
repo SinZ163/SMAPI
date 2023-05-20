@@ -306,6 +306,14 @@ namespace StardewModdingAPI.Metadata
 
                 case "data/buildings": // Game1.LoadContent
                     Game1.buildingsData = content.Load<Dictionary<string, BuildingData>>(key);
+                    if (!ignoreWorld)
+                    {
+                        Utility.ForEachBuilding(building =>
+                        {
+                            building.ReloadBuildingData();
+                            return true;
+                        });
+                    }
                     return true;
 
                 case "data/characters": // Game1.LoadContent
@@ -706,14 +714,9 @@ namespace StardewModdingAPI.Metadata
 
                     foreach (GameLocation location in this.GetLocations())
                     {
-                        if (location is Farm farm)
+                        if (location.animals.Length > 0)
                         {
-                            foreach (FarmAnimal animal in farm.animals.Values)
-                                animals.Add(animal);
-                        }
-                        else if (location is AnimalHouse animalHouse)
-                        {
-                            foreach (FarmAnimal animal in animalHouse.animals.Values)
+                            foreach (FarmAnimal animal in location.animals.Values)
                                 animals.Add(animal);
                         }
                     }
