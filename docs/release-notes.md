@@ -15,6 +15,9 @@
 * For mod authors:
   * Added support for [custom update manifests](https://stardewvalleywiki.com/Modding:Modder_Guide/APIs/Update_checks#Custom_update_manifest) (thanks to Jamie Taylor!).
 
+* For the web UI:
+  * Fixed log parser summary not showing all mods if some have no description.
+
 ## 3.18.4
 Released 24 June 2023 for Stardew Valley 1.5.6 or later.
 
