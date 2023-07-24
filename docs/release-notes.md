@@ -10,6 +10,7 @@
 ## Upcoming release
 * For players:
   * Added support for overriding SMAPI configuration per `Mods` folder (thanks to Shockah!).
+  * Fixed error if you copy null fields from `smapi-internal/config.json` into `config.user.json`.
 
 * For mod authors:
   * Added support for [custom update manifests](https://stardewvalleywiki.com/Modding:Modder_Guide/APIs/Update_checks#Custom_update_manifest) (thanks to Jamie Taylor!).
