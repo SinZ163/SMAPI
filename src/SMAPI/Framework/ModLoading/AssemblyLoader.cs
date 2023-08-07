@@ -7,6 +7,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using StardewModdingAPI.Framework.Exceptions;
 using StardewModdingAPI.Framework.ModLoading.Framework;
+using StardewModdingAPI.Framework.ModLoading.Rewriters;
 using StardewModdingAPI.Framework.ModLoading.Symbols;
 using StardewModdingAPI.Metadata;
 using StardewModdingAPI.Toolkit.Framework.ModData;
@@ -467,6 +468,21 @@ namespace StardewModdingAPI.Framework.ModLoading
                 ? string.Join(", ", handler.Phrases)
                 : handler.DefaultPhrase;
             this.Monitor.LogOnce(loggedMessages, template.Replace("$phrase", phrase));
+            switch (result)
+            {
+                case InstructionHandleResult.Rewritten:
+                    foreach (string rewrite in handler.Phrases)
+                    {
+                        TemporaryLogDumper.AddRewrite(mod, rewrite);
+                    }
+                    break;
+                case InstructionHandleResult.NotCompatible:
+                    foreach (string rewrite in handler.Phrases)
+                    {
+                        TemporaryLogDumper.AddBroken(mod, rewrite);
+                    }
+                    break;
+            }
         }
 
         /// <summary>Get the correct reference to use for compatibility with the current platform.</summary>

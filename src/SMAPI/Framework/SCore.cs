@@ -53,6 +53,7 @@ using LanguageCode = StardewValley.LocalizedContentManager.LanguageCode;
 using MiniMonoModHotfix = MonoMod.Utils.MiniMonoModHotfix;
 using PathUtilities = StardewModdingAPI.Toolkit.Utilities.PathUtilities;
 using SObject = StardewValley.Object;
+using StardewModdingAPI.Framework.ModLoading.Rewriters;
 
 namespace StardewModdingAPI.Framework
 {
@@ -1805,6 +1806,7 @@ namespace StardewModdingAPI.Framework
 
             // unlock content packs
             this.ModRegistry.AreAllModsLoaded = true;
+            TemporaryLogDumper.Dump();
 
             // log mod info
             this.LogManager.LogModInfo(loaded, loadedContentPacks, loadedMods, skippedMods.ToArray(), this.Settings.ParanoidWarnings);
@@ -1943,6 +1945,7 @@ namespace StardewModdingAPI.Framework
             // load as mod
             else
             {
+                TemporaryLogDumper.AddMod(mod);
                 // get mod info
                 FileInfo assemblyFile = this.GetFileLookup(mod.DirectoryPath).GetFile(manifest.EntryDll!);
 
