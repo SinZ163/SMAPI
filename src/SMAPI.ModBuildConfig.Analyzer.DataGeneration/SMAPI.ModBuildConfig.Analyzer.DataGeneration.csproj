@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <Import Project="..\..\build\common.targets" />
+
+  <ItemGroup>
+    <PackageReference Include="Mono.Cecil" Version="0.11.5" />
+    <ProjectReference Include="..\SMAPI.ModBuildConfig.Analyzer\SMAPI.ModBuildConfig.Analyzer.csproj" />
+    <ProjectReference Include="..\SMAPI.Toolkit\SMAPI.Toolkit.csproj" />
+    <Reference Include="Stardew Valley" HintPath="$(GamePath)\Stardew Valley.dll" Private="False" />
+    <Reference Include="StardewValley.GameData" HintPath="$(GamePath)\StardewValley.GameData.dll" Private="False" />
+  </ItemGroup>
+
+  <Target Name="CopyStardew" AfterTargets="AfterBuild">
+    <Copy SourceFiles="$(GamePath)\Stardew Valley.dll" DestinationFolder="$(TargetDir)" />
+    <Copy SourceFiles="$(GamePath)\StardewValley.Gamedata.dll" DestinationFolder="$(TargetDir)" />
+  </Target>
+
+</Project>
