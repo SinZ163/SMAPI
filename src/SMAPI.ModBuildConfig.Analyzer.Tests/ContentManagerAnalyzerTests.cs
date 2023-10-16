@@ -33,6 +33,28 @@ namespace SMAPI.ModBuildConfig.Analyzer.Tests
             }
         ";
 
+        const string SampleUnrelatedGoodProgram = @"
+            using System;
+            using System.Collections.Generic;
+
+            namespace Sample;
+            class Loader
+            {
+                public T Load<T>(string arg)
+                {
+                    return default(T);
+                }
+            }
+            class ModEntry
+            {
+                public void Entry()
+                {
+                    var loader = new Loader();
+                    var test = loader.Load<Dictionary<int,string>>(""Data\Fish"");
+                }
+            }
+        ";
+
         /// <summary>The line number where the unit tested code is injected into <see cref="SampleProgram"/>.</summary>
         private const int SampleCodeLine = 14;
 
@@ -75,6 +97,15 @@ namespace SMAPI.ModBuildConfig.Analyzer.Tests
 
             // assert
             this.VerifyCSharpDiagnostic(code, expected);
+        }
+
+        [TestCase("Game1.content.Load<Dictionary<string, string>>(\"Data\\\\Fish\");", true)]
+        [TestCase(SampleUnrelatedGoodProgram, false)]
+
+        public void ValidCode_HasNoDiagnostics(string codeText, bool useWrapper)
+        {
+            string code = useWrapper ? SampleProgram.Replace("{{test-code}}", codeText) : codeText;
+            this.VerifyCSharpDiagnostic(code);
         }
 
 

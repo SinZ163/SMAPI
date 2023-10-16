@@ -74,7 +74,7 @@ namespace StardewModdingAPI.ModBuildConfig.Analyzer
             string assetName = invocation.ArgumentList.Arguments[0].ToString().Replace("\"", "").Replace("\\\\", "\\");
 
             var formatter = new SymbolDisplayFormat(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces, genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters);
-            string genericArgument = context.SemanticModel.GetTypeInfo((memberAccess.Name as GenericNameSyntax).TypeArgumentList.Arguments[0]).Type.ToDisplayString(formatter);
+            string genericArgument = context.SemanticModel.GetTypeInfo((memberAccess.Name as GenericNameSyntax).TypeArgumentList.Arguments[0]).Type.ToDisplayString(formatter).Replace(" ", "");
 
             if (this.OneSixRules.AssetMap.TryGetValue(assetName, out string expectedType))
             {
