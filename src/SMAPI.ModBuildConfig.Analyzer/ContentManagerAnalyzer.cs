@@ -70,6 +70,9 @@ namespace StardewModdingAPI.ModBuildConfig.Analyzer
             var memberAccess = invocation.Expression as MemberAccessExpressionSyntax;
             if (memberAccess == null || memberAccess.Name.Identifier.ValueText != "Load")
                 return;
+            string? loadNamespace = context.SemanticModel.GetSymbolInfo(memberAccess).Symbol?.ContainingNamespace.Name;
+            if (!(loadNamespace == "StardewValley" || loadNamespace == "StardewModdingAPI"))
+                return;
             // "Data\\Fish" -> Data\Fish
             string assetName = invocation.ArgumentList.Arguments[0].ToString().Replace("\"", "").Replace("\\\\", "\\");
 
@@ -78,6 +81,8 @@ namespace StardewModdingAPI.ModBuildConfig.Analyzer
 
             if (this.OneSixRules.AssetMap.TryGetValue(assetName, out string expectedType))
             {
+                // delete `3 as I can't convince Roslyn and Cecil to agree
+                // TODO: Move into DataGeneration
                 expectedType = Regex.Replace(expectedType, "`\\d+", "");
                 if (genericArgument != expectedType)
                 {

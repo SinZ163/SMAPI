@@ -82,7 +82,7 @@ namespace SMAPI.ModBuildConfig.Analyzer.Tests
         /// <param name="expression">The expression which should be reported.</param>
         /// <param name="netType">The net type name which should be reported.</param>
         /// <param name="suggestedProperty">The suggested property name which should be reported.</param>
-        [TestCase("Game1.content.Load<Dictionary<int, string>>(\"Data\\\\Fish\");", 0, "Data\\Fish", "System.Collections.Generic.Dictionary<System.Int32, System.String>", "System.Collections.Generic.Dictionary<System.String,System.String>")]
+        [TestCase("Game1.content.Load<Dictionary<int, string>>(\"Data\\\\Fish\");", 0, "Data\\Fish", "System.Collections.Generic.Dictionary<System.Int32,System.String>", "System.Collections.Generic.Dictionary<System.String,System.String>")]
         public void BadType_RaisesDiagnostic(string codeText, int column, string assetName, string expectedType, string suggestedType)
         {
             // arrange
