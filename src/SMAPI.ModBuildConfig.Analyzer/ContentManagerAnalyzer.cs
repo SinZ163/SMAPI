@@ -16,7 +16,7 @@ namespace StardewModdingAPI.ModBuildConfig.Analyzer
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; }
 
 
-        /// <summary>The diagnostic info for an avoidable net field access.</summary>
+        /// <summary>The diagnostic info for an avoidable runtime casting error.</summary>
         private readonly DiagnosticDescriptor AvoidBadTypeRule = new(
             id: "AvoidContentManagerBadType",
             title: "Avoid incorrectly typing ContentManager Loads",
@@ -26,10 +26,20 @@ namespace StardewModdingAPI.ModBuildConfig.Analyzer
             isEnabledByDefault: true,
             helpLinkUri: "https://smapi.io/package/avoid-contentmanager-type"
         );
+        /// <summary>The diagnostic info for best practices using DataLoader</summary>
+        private readonly DiagnosticDescriptor PreferDataLoader = new(
+            id: "PreferContentManagerDataLoader",
+            title: "Prefer using DataLoader to ContentManager Loads",
+            messageFormat: "'{0}' can be accessed using 'DataLoader.{0}(LocalizedContentManager content)' instead. See https://smapi.io/package/prefer-contentmanager-dataloader for details.",
+            category: "SMAPI.CommonErrors",
+            defaultSeverity: DiagnosticSeverity.Info,
+            isEnabledByDefault: true,
+            helpLinkUri: "https://smapi.io/package/prefer-contentmanager-dataloader"
+        );
 
         public ContentManagerAnalyzer()
         {
-            this.SupportedDiagnostics = ImmutableArray.CreateRange(new[] { this.AvoidBadTypeRule });
+            this.SupportedDiagnostics = ImmutableArray.CreateRange(new[] { this.AvoidBadTypeRule, this.PreferDataLoader });
         }
 
         public override void Initialize(AnalysisContext context)
@@ -69,6 +79,7 @@ namespace StardewModdingAPI.ModBuildConfig.Analyzer
                 {
                     context.ReportDiagnostic(Diagnostic.Create(this.AvoidBadTypeRule, context.Node.GetLocation(), assetName, method.ReturnType.ToString(), genericArgument.ToString()));
                 }
+                context.ReportDiagnostic(Diagnostic.Create(this.PreferDataLoader, context.Node.GetLocation(), dataAsset));
             }
         }
     }

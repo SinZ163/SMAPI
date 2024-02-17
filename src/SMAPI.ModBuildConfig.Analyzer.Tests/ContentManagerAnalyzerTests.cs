@@ -92,14 +92,46 @@ namespace SMAPI.ModBuildConfig.Analyzer.Tests
                 Id = "AvoidContentManagerBadType",
                 Message = $"'{assetName}' uses the {suggestedType} type, but {expectedType} is in use instead. See https://smapi.io/package/avoid-contentmanager-type for details.",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", SampleCodeLine, SampleCodeColumn + column) }
+                Locations = [new DiagnosticResultLocation("Test0.cs", SampleCodeLine, SampleCodeColumn + column)]
+            };
+            DiagnosticResult preferDataLoader = new()
+            {
+                Id = "PreferContentManagerDataLoader",
+                Message = $"'{assetName[5..]}' can be accessed using 'DataLoader.{assetName[5..]}(LocalizedContentManager content)' instead. See https://smapi.io/package/prefer-contentmanager-dataloader for details.",
+                Severity = DiagnosticSeverity.Info,
+                Locations = [new DiagnosticResultLocation("Test0.cs", SampleCodeLine, SampleCodeColumn + column)]
             };
 
             // assert
-            this.VerifyCSharpDiagnostic(code, expected);
+            this.VerifyCSharpDiagnostic(code, expected, preferDataLoader);
         }
 
-        [TestCase("Game1.content.Load<Dictionary<string, string>>(\"Data\\\\Fish\");", true)]
+
+
+        /// <summary>Test that the expected diagnostic message is raised for avoidable net field references.</summary>
+        /// <param name="codeText">The code line to test.</param>
+        /// <param name="column">The column within the code line where the diagnostic message should be reported.</param>
+        /// <param name="expression">The expression which should be reported.</param>
+        /// <param name="netType">The net type name which should be reported.</param>
+        /// <param name="suggestedProperty">The suggested property name which should be reported.</param>
+        [TestCase("Game1.content.Load<Dictionary<string, string>>(\"Data\\\\Fish\");", 0, "Fish")]
+        public void PreferDataLoader_RaisesDiagnostic(string codeText, int column, string assetName)
+        {
+            // arrange
+            string code = SampleProgram.Replace("{{test-code}}", codeText);
+            DiagnosticResult preferDataLoader = new()
+            {
+                Id = "PreferContentManagerDataLoader",
+                Message = $"'{assetName}' can be accessed using 'DataLoader.{assetName}(LocalizedContentManager content)' instead. See https://smapi.io/package/prefer-contentmanager-dataloader for details.",
+                Severity = DiagnosticSeverity.Info,
+                Locations = [new DiagnosticResultLocation("Test0.cs", SampleCodeLine, SampleCodeColumn + column)]
+            };
+
+            // assert
+            this.VerifyCSharpDiagnostic(code, preferDataLoader);
+        }
+
+        [TestCase("Game1.content.Load<Dictionary<string, string>>(\"Data\\\\Custom_Asset\");", true)]
         [TestCase(SampleUnrelatedGoodProgram, false)]
 
         public void ValidCode_HasNoDiagnostics(string codeText, bool useWrapper)
