@@ -1,35 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Reflection;
-using System.IO;
-using Newtonsoft.Json;
-using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace StardewModdingAPI.ModBuildConfig.Analyzer
 {
-    public class VersionModel
-    {
-        public VersionModel(Dictionary<string, string> assetMap, HashSet<string> missingAssets)
-        {
-            this.AssetMap = assetMap;
-            this.FormerAssets = missingAssets;
-        }
-
-        public Dictionary<string, string> AssetMap { get; set; }
-        public HashSet<string> FormerAssets { get; set; }
-    }
-
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class ContentManagerAnalyzer : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; }
-        public VersionModel OneSixRules { get; }
 
 
         /// <summary>The diagnostic info for an avoidable net field access.</summary>
@@ -45,11 +29,6 @@ namespace StardewModdingAPI.ModBuildConfig.Analyzer
 
         public ContentManagerAnalyzer()
         {
-            using (Stream stream = this.GetType().Assembly.GetManifestResourceStream("StardewModdingAPI.ModBuildConfig.Analyzer.1.6.0.23268.json"))
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                this.OneSixRules = JsonConvert.DeserializeObject<VersionModel>(reader.ReadToEnd());
-            }
             this.SupportedDiagnostics = ImmutableArray.CreateRange(new[] { this.AvoidBadTypeRule });
         }
 
@@ -76,17 +55,19 @@ namespace StardewModdingAPI.ModBuildConfig.Analyzer
             // "Data\\Fish" -> Data\Fish
             string assetName = invocation.ArgumentList.Arguments[0].ToString().Replace("\"", "").Replace("\\\\", "\\");
 
-            var formatter = new SymbolDisplayFormat(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces, genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters);
-            string genericArgument = context.SemanticModel.GetTypeInfo((memberAccess.Name as GenericNameSyntax).TypeArgumentList.Arguments[0]).Type.ToDisplayString(formatter).Replace(" ", "");
+            if (!assetName.StartsWith("Data", StringComparison.InvariantCultureIgnoreCase)) return;
+            string dataAsset = assetName.Substring(5);
 
-            if (this.OneSixRules.AssetMap.TryGetValue(assetName, out string expectedType))
+            var dataLoader = context.Compilation.GetTypeByMetadataName("StardewValley.DataLoader");
+            var dataMatch = dataLoader.GetMembers().FirstOrDefault(m => m.Name == dataAsset);
+            if (dataMatch == null) return;
+            if (dataMatch is IMethodSymbol method)
             {
-                // delete `3 as I can't convince Roslyn and Cecil to agree
-                // TODO: Move into DataGeneration
-                expectedType = Regex.Replace(expectedType, "`\\d+", "");
-                if (genericArgument != expectedType)
+                var genericArgument = context.SemanticModel.GetTypeInfo((memberAccess.Name as GenericNameSyntax).TypeArgumentList.Arguments[0]).Type;
+                // Can't use the proper way of using SymbolEquityComparer due to System.Collections overlapping with CoreLib.
+                if (method.ReturnType.ToString() != genericArgument.ToString())
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(this.AvoidBadTypeRule, context.Node.GetLocation(), assetName, expectedType, genericArgument));
+                    context.ReportDiagnostic(Diagnostic.Create(this.AvoidBadTypeRule, context.Node.GetLocation(), assetName, method.ReturnType.ToString(), genericArgument.ToString()));
                 }
             }
         }

@@ -10,15 +10,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.10.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <AdditionalFiles Include="AnalyzerReleases.Shipped.md" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="1.6.0.23268.json" />
   </ItemGroup>
 
   <ItemGroup>
