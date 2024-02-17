@@ -30,7 +30,7 @@ namespace StardewModdingAPI.ModBuildConfig.Analyzer
         private readonly DiagnosticDescriptor PreferDataLoader = new(
             id: "PreferContentManagerDataLoader",
             title: "Prefer using DataLoader to ContentManager Loads",
-            messageFormat: "'{0}' can be accessed using 'DataLoader.{0}(LocalizedContentManager content)' instead. See https://smapi.io/package/prefer-contentmanager-dataloader for details.",
+            messageFormat: "'{0}' can be accessed using 'DataLoader.{1}(LocalizedContentManager content)' instead. See https://smapi.io/package/prefer-contentmanager-dataloader for details.",
             category: "SMAPI.CommonErrors",
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
@@ -79,7 +79,7 @@ namespace StardewModdingAPI.ModBuildConfig.Analyzer
                 {
                     context.ReportDiagnostic(Diagnostic.Create(this.AvoidBadTypeRule, context.Node.GetLocation(), assetName, method.ReturnType.ToString(), genericArgument.ToString()));
                 }
-                context.ReportDiagnostic(Diagnostic.Create(this.PreferDataLoader, context.Node.GetLocation(), dataAsset));
+                context.ReportDiagnostic(Diagnostic.Create(this.PreferDataLoader, context.Node.GetLocation(), assetName, dataAsset));
             }
         }
     }

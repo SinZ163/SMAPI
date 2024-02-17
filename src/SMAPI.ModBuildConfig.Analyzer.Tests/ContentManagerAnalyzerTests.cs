@@ -97,7 +97,7 @@ namespace SMAPI.ModBuildConfig.Analyzer.Tests
             DiagnosticResult preferDataLoader = new()
             {
                 Id = "PreferContentManagerDataLoader",
-                Message = $"'{assetName[5..]}' can be accessed using 'DataLoader.{assetName[5..]}(LocalizedContentManager content)' instead. See https://smapi.io/package/prefer-contentmanager-dataloader for details.",
+                Message = $"'{assetName}' can be accessed using 'DataLoader.{assetName[5..]}(LocalizedContentManager content)' instead. See https://smapi.io/package/prefer-contentmanager-dataloader for details.",
                 Severity = DiagnosticSeverity.Info,
                 Locations = [new DiagnosticResultLocation("Test0.cs", SampleCodeLine, SampleCodeColumn + column)]
             };
@@ -114,7 +114,7 @@ namespace SMAPI.ModBuildConfig.Analyzer.Tests
         /// <param name="expression">The expression which should be reported.</param>
         /// <param name="netType">The net type name which should be reported.</param>
         /// <param name="suggestedProperty">The suggested property name which should be reported.</param>
-        [TestCase("Game1.content.Load<Dictionary<string, string>>(\"Data\\\\Fish\");", 0, "Fish")]
+        [TestCase("Game1.content.Load<Dictionary<string, string>>(\"Data\\\\Fish\");", 0, "Data\\Fish")]
         public void PreferDataLoader_RaisesDiagnostic(string codeText, int column, string assetName)
         {
             // arrange
@@ -122,7 +122,7 @@ namespace SMAPI.ModBuildConfig.Analyzer.Tests
             DiagnosticResult preferDataLoader = new()
             {
                 Id = "PreferContentManagerDataLoader",
-                Message = $"'{assetName}' can be accessed using 'DataLoader.{assetName}(LocalizedContentManager content)' instead. See https://smapi.io/package/prefer-contentmanager-dataloader for details.",
+                Message = $"'{assetName}' can be accessed using 'DataLoader.{assetName[5..]}(LocalizedContentManager content)' instead. See https://smapi.io/package/prefer-contentmanager-dataloader for details.",
                 Severity = DiagnosticSeverity.Info,
                 Locations = [new DiagnosticResultLocation("Test0.cs", SampleCodeLine, SampleCodeColumn + column)]
             };
