@@ -17,6 +17,29 @@ internal class AssetDataForImage : AssetData<Texture2D>, IAssetDataForImage
     /// <remarks>On Linux/macOS, fully transparent pixels may have an alpha up to 4 for some reason.</remarks>
     private const byte MinOpacity = 5;
 
+    private IRawTextureData? RawData;
+
+    private void PopulateRawData()
+    {
+        // If this is the first edit, or the last was Texture2D or Extend, need to rebuild the raw model
+        if (this.RawData == null)
+        {
+            int targetPixelCount = this.Data.Width * this.Data.Height;
+            Color[] targetData = GC.AllocateUninitializedArray<Color>(targetPixelCount);
+            this.Data.GetData(targetData, 0, targetPixelCount);
+            this.RawData = new RawTextureData(this.Data.Width, this.Data.Height, targetData);
+        }
+    }
+    private void RevertToTexture2D()
+    {
+        // If raw changes happened, revert back to real Texture2D again
+        if (this.RawData != null)
+        {
+            this.Data.SetData(this.RawData.Data, 0, this.Data.Width * this.Data.Height);
+            this.RawData = null;
+        }
+    }
+
 
     /*********
     ** Public methods
@@ -105,6 +128,8 @@ internal class AssetDataForImage : AssetData<Texture2D>, IAssetDataForImage
         if (this.Data.Width >= minWidth && this.Data.Height >= minHeight)
             return false;
 
+        this.RevertToTexture2D();
+
         Texture2D original = this.Data;
         Texture2D texture = new Texture2D(Game1.graphics.GraphicsDevice, Math.Max(original.Width, minWidth), Math.Max(original.Height, minHeight)).SetName(original.Name);
         this.ReplaceWith(texture);
@@ -140,6 +165,13 @@ internal class AssetDataForImage : AssetData<Texture2D>, IAssetDataForImage
     /// <exception cref="InvalidOperationException">The content being read isn't an image.</exception>
     private void PatchImageImpl(Color[] sourceData, int sourceWidth, int sourceHeight, Rectangle sourceArea, Rectangle targetArea, PatchMode patchMode, int startRow = 0)
     {
+        if (patchMode == PatchMode.Replace)
+        {
+            this.PopulateRawData();
+            this.PatchImageImplRaw(sourceData, sourceWidth, sourceHeight, sourceArea, targetArea, startRow);
+            return;
+        }
+        this.RevertToTexture2D();
         // get texture info
         Texture2D target = this.Data;
         int pixelCount = sourceArea.Width * sourceArea.Height;
@@ -237,6 +269,51 @@ internal class AssetDataForImage : AssetData<Texture2D>, IAssetDataForImage
         finally
         {
             ArrayPool<Color>.Shared.Return(mergedData);
+        }
+    }
+
+
+    /// <summary>Overwrite part of the image in an optimized form for replace methods</summary>
+    /// <param name="sourceData">The image data to patch into the content.</param>
+    /// <param name="sourceWidth">The pixel width of the original source image.</param>
+    /// <param name="sourceHeight">The pixel height of the original source image.</param>
+    /// <param name="sourceArea">The part of the <paramref name="sourceData"/> to copy (or <c>null</c> to take the whole texture). This must be within the bounds of the <paramref name="sourceData"/> texture.</param>
+    /// <param name="targetArea">The part of the content to patch (or <c>null</c> to patch the whole texture). The original content within this area will be erased. This must be within the bounds of the existing spritesheet.</param>
+    /// <param name="startRow">The row to start on, for the sourceData.</param>
+    /// <exception cref="ArgumentNullException">One of the arguments is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <paramref name="targetArea"/> is outside the bounds of the spritesheet.</exception>
+    /// <exception cref="InvalidOperationException">The content being read isn't an image.</exception>
+    private void PatchImageImplRaw(Color[] sourceData, int sourceWidth, int sourceHeight, Rectangle sourceArea, Rectangle targetArea, int startRow = 0)
+    {
+        if (this.RawData == null)
+        {
+            throw new NullReferenceException("Unexpected RawData null");
+        }
+        // get texture info
+        IRawTextureData target = this.RawData;
+        int pixelCount = sourceArea.Width * sourceArea.Height;
+        int firstPixel = startRow * sourceArea.Width;
+        int lastPixel = firstPixel + pixelCount - 1;
+
+        // validate
+        if (sourceArea.X < 0 || sourceArea.Y < 0 || sourceArea.Right > sourceWidth || sourceArea.Bottom > sourceHeight)
+            throw new ArgumentOutOfRangeException(nameof(sourceArea), "The source area is outside the bounds of the source texture.");
+        if (targetArea.X < 0 || targetArea.Y < 0 || targetArea.Height > target.Height || targetArea.Width > target.Width)
+            throw new ArgumentOutOfRangeException(nameof(targetArea), "The target area is outside the bounds of the target texture.");
+        if (sourceArea.Size != targetArea.Size)
+            throw new InvalidOperationException("The source and target areas must be the same size.");
+
+        if (targetArea.Width == target.Width)
+        {
+            Array.Copy(sourceData, 0, target.Data, firstPixel, pixelCount);
+            return;
+        }
+        // Following code assumes startRow cant be set if width is same, and that sourceWidth,sourceHeight, sourceArea.X and sourceArea.Y all lie.
+        for (int y = 0, maxY = sourceArea.Height; y < maxY; y++)
+        {
+            int sourceIndex = (y * sourceArea.Width);
+            int targetIndex = ((y + targetArea.Y) * sourceArea.Width) + targetArea.X;
+            Array.Copy(sourceData, sourceIndex, target.Data, targetIndex, sourceArea.Width);
         }
     }
 }
