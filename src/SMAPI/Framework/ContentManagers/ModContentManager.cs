@@ -1,5 +1,6 @@
 using System;
 using System.Buffers;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -44,6 +45,8 @@ internal sealed class ModContentManager : BaseContentManager
 
     /// <summary>If a map tilesheet's image source has no file extensions, the file extensions to check for in the local mod folder.</summary>
     private static readonly string[] LocalTilesheetExtensions = { ".png", ".xnb" };
+
+    private readonly Dictionary<string, RawTextureData> TextureCache = [];
 
 
     /*********
@@ -220,6 +223,12 @@ internal sealed class ModContentManager : BaseContentManager
     [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "The 'forRawData' parameter is only added for mods which may intercept this method.")]
     private IRawTextureData LoadRawImageData(FileInfo file, bool forRawData)
     {
+        if (this.TextureCache.TryGetValue(file.FullName, out var cacheResult))
+        {
+            var cacheColors = cacheResult.Data;
+            return new RawTextureData(cacheResult.Width, cacheResult.Height, cacheColors);
+        }
+
         // load raw data
         int width;
         int height;
@@ -238,13 +247,19 @@ internal sealed class ModContentManager : BaseContentManager
 
         // convert to XNA pixel format
         var pixels = GC.AllocateUninitializedArray<Color>(rawPixels.Length);
+        var pixelCache = GC.AllocateUninitializedArray<Color>(rawPixels.Length);
         for (int i = 0; i < pixels.Length; i++)
         {
             SKPMColor pixel = rawPixels[i];
             pixels[i] = pixel.Alpha == 0
                 ? Color.Transparent
                 : new Color(r: pixel.Red, g: pixel.Green, b: pixel.Blue, alpha: pixel.Alpha);
+
+            pixelCache[i] = pixel.Alpha == 0
+                ? Color.Transparent
+                : new Color(r: pixel.Red, g: pixel.Green, b: pixel.Blue, alpha: pixel.Alpha);
         }
+        this.TextureCache.Add(file.FullName, new RawTextureData(width, height, pixelCache));
 
         return new RawTextureData(width, height, pixels);
     }
