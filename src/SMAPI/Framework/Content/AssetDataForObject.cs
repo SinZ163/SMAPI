@@ -15,6 +15,8 @@ internal class AssetDataForObject : AssetData<object>, IAssetData
     /// <summary>Simplifies access to private code.</summary>
     private readonly Reflector Reflection;
 
+    private AssetDataForImage? ImageRepresentation;
+
 
     /*********
     ** Public methods
@@ -50,7 +52,11 @@ internal class AssetDataForObject : AssetData<object>, IAssetData
     /// <inheritdoc />
     public IAssetDataForImage AsImage()
     {
-        return new AssetDataForImage(this.Locale, this.Name, this.GetData<Texture2D>(), this.GetNormalizedPath, this.ReplaceWith);
+        if (this.ImageRepresentation == null)
+        {
+            this.ImageRepresentation = new AssetDataForImage(this.Locale, this.Name, this.GetData<Texture2D>(), this.GetNormalizedPath, this.ReplaceWith);
+        }
+        return this.ImageRepresentation;
     }
 
     /// <inheritdoc />

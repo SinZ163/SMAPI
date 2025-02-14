@@ -19,7 +19,7 @@ internal class AssetDataForImage : AssetData<Texture2D>, IAssetDataForImage
 
     private IRawTextureData? RawData;
 
-    private void PopulateRawData()
+    internal void PopulateRawData()
     {
         // If this is the first edit, or the last was Texture2D or Extend, need to rebuild the raw model
         if (this.RawData == null)
@@ -30,12 +30,12 @@ internal class AssetDataForImage : AssetData<Texture2D>, IAssetDataForImage
             this.RawData = new RawTextureData(this.Data.Width, this.Data.Height, targetData);
         }
     }
-    private void RevertToTexture2D()
+    internal void RevertToTexture2D()
     {
         // If raw changes happened, revert back to real Texture2D again
         if (this.RawData != null)
         {
-            this.Data.SetData(this.RawData.Data, 0, this.Data.Width * this.Data.Height);
+            this.Data.SetData(this.RawData.Data, 0, this.RawData.Width * this.RawData.Height);
             this.RawData = null;
         }
     }

@@ -262,6 +262,12 @@ internal class GameContentManager : BaseContentManager
                 asset = GetNewData(prevAsset);
             }
         }
+        // If we have been doing image edits using RawData, make sure it collapses back to a Texture2D when we are done
+        if (asset.Data is Texture2D && asset is AssetDataForObject assetData)
+        {
+            var imageEditor = assetData.AsImage() as AssetDataForImage;
+            imageEditor?.RevertToTexture2D();
+        }
 
         // return result
         return asset;
