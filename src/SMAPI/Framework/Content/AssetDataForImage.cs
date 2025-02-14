@@ -312,7 +312,7 @@ internal class AssetDataForImage : AssetData<Texture2D>, IAssetDataForImage
         for (int y = 0, maxY = sourceArea.Height; y < maxY; y++)
         {
             int sourceIndex = (y * sourceArea.Width);
-            int targetIndex = ((y + targetArea.Y) * sourceArea.Width) + targetArea.X;
+            int targetIndex = ((y + targetArea.Top) * target.Width) + targetArea.Left;
             Array.Copy(sourceData, sourceIndex, target.Data, targetIndex, sourceArea.Width);
         }
     }
