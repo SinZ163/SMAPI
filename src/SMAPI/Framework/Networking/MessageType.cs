@@ -8,6 +8,9 @@ internal enum MessageType : byte
     /*********
     ** SMAPI
     *********/
+    /// <summary>A data message containing a ModNetRoot delta synchronization.</summary>
+    ModNetRoot = 253,
+
     /// <summary>A data message intended for mods to consume.</summary>
     ModMessage = 254,
 

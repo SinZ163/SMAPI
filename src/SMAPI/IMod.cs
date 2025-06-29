@@ -1,7 +1,4 @@
-namespace StardewModdingAPI;
-
-/// <summary>The implementation for a Stardew Valley mod.</summary>
-public interface IMod
+namespace StardewModdingAPI
 {
     /*********
     ** Accessors
@@ -33,4 +30,7 @@ public interface IMod
     /// <remarks>Returns the API instance, or <c>null</c> if the mod has no API. Note that <paramref name="mod"/> is provided for informational purposes only, and that denying API access to specific mods is strongly discouraged and may be considered abusive.</remarks>
     /// <inheritdoc cref="GetApi()" include="/Remarks" />
     object? GetApi(IModInfo mod);
+
+    /// <summary>Get a ModdedNetRoot that will be synchronized with other clients.</summary>
+    INetRoot? GetNetRoot();
 }

@@ -56,6 +56,8 @@ internal class SMultiplayer : Multiplayer
     /// <summary>The backing field for <see cref="HostPeer"/>.</summary>
     private readonly PerScreen<MultiplayerPeer?> HostPeerImpl = new();
 
+    /// <summary>The tick interval that the modded netroots sync at </summary>
+    private int moddedDeltaBroadcastPeriod = 3;
 
     /*********
     ** Accessors
@@ -250,6 +252,18 @@ internal class SMultiplayer : Multiplayer
         }
     }
 
+    public override void UpdateLate(bool forceSync = false)
+    {
+        if (Game1.multiplayerMode != 0)
+        {
+            if (!base.allowSyncDelay() || forceSync || Game1.ticks % this.moddedDeltaBroadcastPeriod == 0)
+            {
+                // TODO: Finish
+            }
+        }
+        base.UpdateLate(forceSync);
+    }
+
     /// <summary>Process an incoming network message as a farmhand.</summary>
     /// <param name="message">The message to process.</param>
     /// <param name="sendMessage">Send an arbitrary message through the client.</param>
@@ -262,6 +276,9 @@ internal class SMultiplayer : Multiplayer
 
         switch (message.MessageType)
         {
+            case (byte)MessageType.ModNetRoot:
+                this.ReceiveModRoot(message);
+                break;
             // mod context sync (step 4)
             case (byte)MessageType.ModContext:
                 {
@@ -475,14 +492,22 @@ internal class SMultiplayer : Multiplayer
             : null; // no data available for vanilla players
     }
 
+
+    /// <summary>Receive a mod netroot sent from another player's mods.</summary>
+    /// <param name="message">The raw message to parse.</param>
+    private void ReceiveModRoot(IncomingMessage message)
+    {
+        throw new NotImplementedException();
+    }
+
     /// <summary>Receive a mod message sent from another player's mods.</summary>
     /// <param name="message">The raw message to parse.</param>
     private void ReceiveModMessage(IncomingMessage message)
-    {
-        // read message JSON
-        string json = message.Reader.ReadString();
-        if (this.LogNetworkTraffic)
-            this.Monitor.Log($"Received message: {json}.");
+        {
+            // read message JSON
+            string json = message.Reader.ReadString();
+            if (this.LogNetworkTraffic)
+                this.Monitor.Log($"Received message: {json}.");
 
         // deserialize model
         ModMessageModel? model;

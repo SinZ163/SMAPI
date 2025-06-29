@@ -1,4 +1,5 @@
 using System;
+using Netcode;
 
 namespace StardewModdingAPI;
 
@@ -32,6 +33,12 @@ public abstract class Mod : IMod, IDisposable
 
     /// <inheritdoc />
     public virtual object? GetApi(IModInfo mod)
+    {
+        return null;
+    }
+
+    /// <inheritdoc />
+    public virtual INetRoot? GetNetRoot()
     {
         return null;
     }
