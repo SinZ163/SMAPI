@@ -53,8 +53,8 @@ repo. It imports the other MSBuild files as needed.
   <!-- launch SMAPI through Visual Studio -->
   <PropertyGroup Condition="'$(MSBuildProjectName)' == 'SMAPI'">
     <StartAction>Program</StartAction>
-    <StartProgram>$(GamePath)\StardewModdingAPI.exe</StartProgram>
-    <StartWorkingDirectory>$(GamePath)</StartWorkingDirectory>
+    <StartProgram>$(GamePath)\smapi-internal\StardewModdingAPI.exe</StartProgram>
+    <StartWorkingDirectory>$(GamePath)\smapi-internal</StartWorkingDirectory>
   </PropertyGroup>
 
   <!-- Somehow this makes Visual Studio for macOS recognise the previous section. Nobody knows why. -->

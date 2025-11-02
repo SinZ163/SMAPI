@@ -69,7 +69,7 @@ internal class Program
         {
             Program.AssemblyPathsByName = new(StringComparer.OrdinalIgnoreCase);
 
-            foreach (string searchPath in new[] { EarlyConstants.GamePath, Program.DllSearchPath })
+            foreach (string searchPath in new[] { Program.DllSearchPath, EarlyConstants.GamePath  })
             {
                 foreach (string dllPath in Directory.EnumerateFiles(searchPath, "*.dll"))
                 {
