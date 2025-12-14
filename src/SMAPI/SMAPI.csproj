@@ -14,8 +14,6 @@
     <!--copy dependency DLLs to bin folder so we can include them in installer bundle -->
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 
-    <!-- tiered compilation breaks Harmony -->
-    <TieredCompilation>false</TieredCompilation>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
