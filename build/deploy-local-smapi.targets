@@ -15,16 +15,20 @@ This assumes `find-game-folder.targets` has already been imported and validated.
     <ItemGroup>
       <TranslationFiles Include="$(TargetDir)\i18n\*.json" />
       <Dllfiles Include="$(TargetDir)\*.dll" />
+      <!-- Satori files being manually copied for now, TODO: Automate properly -->
+      <DllFiles Remove="$(TargetDir)\clrjit.dll" Condition="false" />
+      <DllFiles Remove="$(TargetDir)\coreclr.dll" Condition="false"/>
+      <DllFiles Remove="$(TargetDir)\System.Private.CoreLib.dll" Condition="false"/>
     </ItemGroup>
-    <Copy SourceFiles="@(Dllfiles)" DestinationFolder="$(GamePath)\smapi-internal" />
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).exe" DestinationFolder="$(GamePath)\smapi-internal" Condition="$(OS) == 'Windows_NT'" />
-    <Copy SourceFiles="$(TargetDir)\$(TargetName)" DestinationFolder="$(GamePath)\smapi-internal" Condition="$(OS) != 'Windows_NT'" />
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).xml" DestinationFolder="$(GamePath)\smapi-internal" />
-    <Copy SourceFiles="$(TargetDir)\createdump.exe" DestinationFolder="$(GamePath)\smapi-internal" />
-    <Copy SourceFiles="$(TargetDir)\SMAPI.blacklist.json" DestinationFiles="$(GamePath)\smapi-internal\blacklist.json" />
-    <Copy SourceFiles="$(TargetDir)\SMAPI.config.json" DestinationFiles="$(GamePath)\smapi-internal\config.json" />
-    <Copy SourceFiles="$(TargetDir)\SMAPI.metadata.json" DestinationFiles="$(GamePath)\smapi-internal\metadata.json" />
-    <Copy SourceFiles="@(TranslationFiles)" DestinationFolder="$(GamePath)\smapi-internal\i18n" />
+    <Copy SourceFiles="@(Dllfiles)" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="$(TargetDir)\$(TargetName).exe" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" Condition="$(OS) == 'Windows_NT'" />
+    <Copy SourceFiles="$(TargetDir)\$(TargetName)" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" Condition="$(OS) != 'Windows_NT'" />
+    <Copy SourceFiles="$(TargetDir)\$(TargetName).xml" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="$(TargetDir)\createdump.exe" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="$(TargetDir)\SMAPI.blacklist.json" DestinationFiles="$(GamePath)\$(SMAPIInternalFolderName)\blacklist.json" />
+    <Copy SourceFiles="$(TargetDir)\SMAPI.config.json" DestinationFiles="$(GamePath)\$(SMAPIInternalFolderName)\config.json" />
+    <Copy SourceFiles="$(TargetDir)\SMAPI.metadata.json" DestinationFiles="$(GamePath)\$(SMAPIInternalFolderName)\metadata.json" />
+    <Copy SourceFiles="@(TranslationFiles)" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)\i18n" />
   </Target>
 
   <!-- .NET metadata files -->
@@ -47,11 +51,11 @@ This assumes `find-game-folder.targets` has already been imported and validated.
 
   <!-- toolkit -->
   <Target Name="CopyToolkit" Condition="'$(MSBuildProjectName)' == 'SMAPI.Toolkit'" AfterTargets="PostBuildEvent">
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).dll" DestinationFolder="$(GamePath)\smapi-internal" />
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).xml" DestinationFolder="$(GamePath)\smapi-internal" />
+    <Copy SourceFiles="$(TargetDir)\$(TargetName).dll" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="$(TargetDir)\$(TargetName).xml" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
   </Target>
   <Target Name="CopyToolkitCoreInterfaces" Condition="'$(MSBuildProjectName)' == 'SMAPI.Toolkit.CoreInterfaces'" AfterTargets="PostBuildEvent">
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).dll" DestinationFolder="$(GamePath)\smapi-internal" />
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).xml" DestinationFolder="$(GamePath)\smapi-internal" />
+    <Copy SourceFiles="$(TargetDir)\$(TargetName).dll" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="$(TargetDir)\$(TargetName).xml" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
   </Target>
 </Project>

@@ -5,10 +5,19 @@ repo. It imports the other MSBuild files as needed.
 
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <!-- _Parameter1 corresponds to the 'key' argument of the attribute's constructor -->
+      <_Parameter1>SMAPIInternalFolderName</_Parameter1>
+      <!-- _Parameter2 corresponds to the 'value' argument; here we use a dynamic MSBuild property -->
+      <_Parameter2>$(SMAPIInternalFolderName)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
   <PropertyGroup>
     <!--set general build properties -->
     <Version>4.3.2</Version>
     <Product>SMAPI</Product>
+    <SMAPIInternalFolderName>smapi-internal-net9</SMAPIInternalFolderName>
     <LangVersion>latest</LangVersion>
     <AssemblySearchPaths>$(AssemblySearchPaths);{GAC}</AssemblySearchPaths>
     <DebugSymbols>true</DebugSymbols>
@@ -42,6 +51,7 @@ repo. It imports the other MSBuild files as needed.
 
   <!--find game folder-->
   <Import Project="find-game-folder.targets" />
+  <!--<Import Project="satori-gc.targets" Condition="$(Configuration.EndsWith('Satori')) AND '$(MSBuildProjectName)' == 'SMAPI'"/>-->
   <Target Name="ValidateInstallPath" AfterTargets="BeforeBuild">
     <!-- if game path is invalid, show one user-friendly error instead of a slew of reference errors -->
     <Error Condition="!Exists('$(GamePath)')" Text="Failed to find the game install path automatically. You can specify where to find it; see https://smapi.io/package/custom-game-path." />
@@ -53,8 +63,8 @@ repo. It imports the other MSBuild files as needed.
   <!-- launch SMAPI through Visual Studio -->
   <PropertyGroup Condition="'$(MSBuildProjectName)' == 'SMAPI'">
     <StartAction>Program</StartAction>
-    <StartProgram>$(GamePath)\smapi-internal\StardewModdingAPI.exe</StartProgram>
-    <StartWorkingDirectory>$(GamePath)\smapi-internal</StartWorkingDirectory>
+    <StartProgram>$(GamePath)\$(SMAPIInternalFolderName)\StardewModdingAPI.exe</StartProgram>
+    <StartWorkingDirectory>$(GamePath)\$(SMAPIInternalFolderName)</StartWorkingDirectory>
   </PropertyGroup>
 
   <!-- Somehow this makes Visual Studio for macOS recognise the previous section. Nobody knows why. -->
