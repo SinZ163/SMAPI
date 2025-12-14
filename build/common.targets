@@ -17,7 +17,7 @@ repo. It imports the other MSBuild files as needed.
     <!--set general build properties -->
     <Version>4.3.2</Version>
     <Product>SMAPI</Product>
-    <SMAPIInternalFolderName>smapi-internal-net9</SMAPIInternalFolderName>
+    <SMAPIInternalFolderName>smapi-internal-net10</SMAPIInternalFolderName>
     <LangVersion>latest</LangVersion>
     <AssemblySearchPaths>$(AssemblySearchPaths);{GAC}</AssemblySearchPaths>
     <DebugSymbols>true</DebugSymbols>
