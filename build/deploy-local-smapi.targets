@@ -21,6 +21,7 @@ This assumes `find-game-folder.targets` has already been imported and validated.
       <DllFiles Remove="$(TargetDir)\System.Private.CoreLib.dll" Condition="false"/>
     </ItemGroup>
     <Copy SourceFiles="@(Dllfiles)" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="$(TargetDir)\steam_appid.txt" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
     <Copy SourceFiles="$(TargetDir)\$(TargetName).exe" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" Condition="$(OS) == 'Windows_NT'" />
     <Copy SourceFiles="$(TargetDir)\$(TargetName)" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" Condition="$(OS) != 'Windows_NT'" />
     <Copy SourceFiles="$(TargetDir)\$(TargetName).xml" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
