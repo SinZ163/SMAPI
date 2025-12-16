@@ -25,6 +25,8 @@ This assumes `find-game-folder.targets` has already been imported and validated.
     <Copy SourceFiles="$(TargetDir)\$(TargetName).exe" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" Condition="$(OS) == 'Windows_NT'" />
     <Copy SourceFiles="$(TargetDir)\$(TargetName)" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" Condition="$(OS) != 'Windows_NT'" />
     <Copy SourceFiles="$(TargetDir)\$(TargetName).xml" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="$(TargetDir)\$(TargetName).runtimeconfig.json" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="$(TargetDir)\$(TargetName).deps.json" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
     <Copy SourceFiles="$(TargetDir)\createdump.exe" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
     <Copy SourceFiles="$(TargetDir)\SMAPI.blacklist.json" DestinationFiles="$(GamePath)\$(SMAPIInternalFolderName)\blacklist.json" />
     <Copy SourceFiles="$(TargetDir)\SMAPI.config.json" DestinationFiles="$(GamePath)\$(SMAPIInternalFolderName)\config.json" />
