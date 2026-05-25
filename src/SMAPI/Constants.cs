@@ -26,6 +26,7 @@ internal static class EarlyConstants
     // rename "Stardew Valley.exe" in the game folder; you should see an error like "Oops!
     // SMAPI can't find the game", not a technical exception.
     //
+    public static string InternalFolderName = Assembly.GetCallingAssembly().GetCustomAttributes<AssemblyMetadataAttribute>().FirstOrDefault(metadata => metadata.Key == "SMAPIInternalFolderName")?.Value ?? "smapi-internal";
 
     /*********
     ** Accessors
@@ -34,7 +35,7 @@ internal static class EarlyConstants
     public static string GamePath { get; } = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
 
     /// <summary>The absolute path to the folder containing SMAPI's internal files.</summary>
-    public static readonly string InternalFilesPath = Path.Combine(EarlyConstants.GamePath, "smapi-internal");
+    public static readonly string InternalFilesPath = Path.Combine(EarlyConstants.GamePath, EarlyConstants.InternalFolderName);
 
     /// <summary>The target game platform.</summary>
     internal static GamePlatform Platform { get; } = (GamePlatform)Enum.Parse(typeof(GamePlatform), LowLevelEnvironmentUtility.DetectPlatform());

@@ -19,26 +19,26 @@ This assumes `find-game-folder.targets` has already been imported and validated.
     <Copy SourceFiles="$(TargetDir)\$(TargetName).exe" DestinationFolder="$(GamePath)" Condition="$(OS) == 'Windows_NT'" />
     <Copy SourceFiles="$(TargetDir)\$(TargetName)" DestinationFolder="$(GamePath)" Condition="$(OS) != 'Windows_NT'" />
     <Copy SourceFiles="$(TargetDir)\$(TargetName).xml" DestinationFolder="$(GamePath)" />
-    <Copy SourceFiles="$(TargetDir)\SMAPI.blacklist.json" DestinationFiles="$(GamePath)\smapi-internal\blacklist.json" />
-    <Copy SourceFiles="$(TargetDir)\SMAPI.config.json" DestinationFiles="$(GamePath)\smapi-internal\config.json" />
-    <Copy SourceFiles="$(TargetDir)\SMAPI.metadata.json" DestinationFiles="$(GamePath)\smapi-internal\metadata.json" />
-    <Copy SourceFiles="$(TargetDir)\Markdig.dll" DestinationFolder="$(GamePath)\smapi-internal" />
-    <Copy SourceFiles="$(TargetDir)\Newtonsoft.Json.dll" DestinationFolder="$(GamePath)\smapi-internal" />
-    <Copy SourceFiles="$(TargetDir)\TMXTile.dll" DestinationFolder="$(GamePath)\smapi-internal" />
-    <Copy SourceFiles="$(TargetDir)\Pintail.dll" DestinationFolder="$(GamePath)\smapi-internal" />
-    <Copy SourceFiles="@(TranslationFiles)" DestinationFolder="$(GamePath)\smapi-internal\i18n" />
+    <Copy SourceFiles="$(TargetDir)\SMAPI.blacklist.json" DestinationFiles="$(GamePath)\$(SMAPIInternalFolderName)\blacklist.json" />
+    <Copy SourceFiles="$(TargetDir)\SMAPI.config.json" DestinationFiles="$(GamePath)\$(SMAPIInternalFolderName)\config.json" />
+    <Copy SourceFiles="$(TargetDir)\SMAPI.metadata.json" DestinationFiles="$(GamePath)\$(SMAPIInternalFolderName)\metadata.json" />
+    <Copy SourceFiles="$(TargetDir)\Markdig.dll" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="$(TargetDir)\Newtonsoft.Json.dll" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="$(TargetDir)\TMXTile.dll" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="$(TargetDir)\Pintail.dll" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="@(TranslationFiles)" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)\i18n" />
 
     <!-- Harmony + dependencies -->
-    <Copy SourceFiles="$(TargetDir)\0Harmony.dll" DestinationFolder="$(GamePath)\smapi-internal" />
-    <Copy SourceFiles="$(TargetDir)\0Harmony.xml" DestinationFolder="$(GamePath)\smapi-internal" />
-    <Copy SourceFiles="$(TargetDir)\Mono.Cecil.dll" DestinationFolder="$(GamePath)\smapi-internal" />
-    <Copy SourceFiles="$(TargetDir)\Mono.Cecil.Mdb.dll" DestinationFolder="$(GamePath)\smapi-internal" />
-    <Copy SourceFiles="$(TargetDir)\Mono.Cecil.Pdb.dll" DestinationFolder="$(GamePath)\smapi-internal" />
-    <Copy SourceFiles="$(TargetDir)\MonoMod.Common.dll" DestinationFolder="$(GamePath)\smapi-internal" />
+    <Copy SourceFiles="$(TargetDir)\0Harmony.dll" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="$(TargetDir)\0Harmony.xml" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="$(TargetDir)\Mono.Cecil.dll" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="$(TargetDir)\Mono.Cecil.Mdb.dll" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="$(TargetDir)\Mono.Cecil.Pdb.dll" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="$(TargetDir)\MonoMod.Common.dll" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
 
     <!-- FluentHttpClient + dependencies -->
-    <Copy SourceFiles="$(TargetDir)\Pathoschild.Http.Client.dll" DestinationFolder="$(GamePath)\smapi-internal" />
-    <Copy SourceFiles="$(TargetDir)\System.Net.Http.Formatting.dll" DestinationFolder="$(GamePath)\smapi-internal" />
+    <Copy SourceFiles="$(TargetDir)\Pathoschild.Http.Client.dll" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="$(TargetDir)\System.Net.Http.Formatting.dll" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
   </Target>
 
   <!-- .NET metadata files -->
@@ -61,11 +61,11 @@ This assumes `find-game-folder.targets` has already been imported and validated.
 
   <!-- toolkit -->
   <Target Name="CopyToolkit" Condition="'$(MSBuildProjectName)' == 'SMAPI.Toolkit'" AfterTargets="PostBuildEvent">
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).dll" DestinationFolder="$(GamePath)\smapi-internal" />
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).xml" DestinationFolder="$(GamePath)\smapi-internal" />
+    <Copy SourceFiles="$(TargetDir)\$(TargetName).dll" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="$(TargetDir)\$(TargetName).xml" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
   </Target>
   <Target Name="CopyToolkitCoreInterfaces" Condition="'$(MSBuildProjectName)' == 'SMAPI.Toolkit.CoreInterfaces'" AfterTargets="PostBuildEvent">
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).dll" DestinationFolder="$(GamePath)\smapi-internal" />
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).xml" DestinationFolder="$(GamePath)\smapi-internal" />
+    <Copy SourceFiles="$(TargetDir)\$(TargetName).dll" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
+    <Copy SourceFiles="$(TargetDir)\$(TargetName).xml" DestinationFolder="$(GamePath)\$(SMAPIInternalFolderName)" />
   </Target>
 </Project>
