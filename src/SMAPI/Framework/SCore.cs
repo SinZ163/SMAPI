@@ -283,9 +283,10 @@ internal class SCore : IDisposable
             );
             GameRunner.instance = this.Game;
 
+            // TODO: Figure out if this is still needed at all
             // fix Harmony for mods
-            if (this.Settings.FixHarmony)
-                MiniMonoModHotfix.Apply();
+            // if (this.Settings.FixHarmony)
+            //     MiniMonoModHotfix.Apply();
 
             // set window titles
             this.UpdateWindowTitles();

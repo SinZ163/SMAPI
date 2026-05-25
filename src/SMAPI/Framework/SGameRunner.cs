@@ -82,6 +82,9 @@ internal class SGameRunner : GameRunner
         // init XNA
         Game1.graphics.GraphicsProfile = GraphicsProfile.HiDef;
 
+        // TODO: MacOS/Linux compatibility
+        reflection.GetProperty<string>(Type.GetType("Microsoft.Xna.Framework.TitleContainer,MonoGame.Framework"), "Location").SetValue(Constants.GamePath);
+
         // hook into game
         this.ModHooks = modHooks;
         this.GameLogger = gameLogger;

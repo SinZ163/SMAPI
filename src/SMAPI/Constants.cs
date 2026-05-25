@@ -32,7 +32,7 @@ internal static class EarlyConstants
     ** Accessors
     *********/
     /// <summary>The path to the game folder.</summary>
-    public static string GamePath { get; } = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+    public static string GamePath { get; } = Directory.GetParent(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).FullName;
 
     /// <summary>The absolute path to the folder containing SMAPI's internal files.</summary>
     public static readonly string InternalFilesPath = Path.Combine(EarlyConstants.GamePath, EarlyConstants.InternalFolderName);
